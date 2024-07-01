@@ -52,7 +52,7 @@ public class RealmController : MonoBehaviour
                     LoginSystemController.Instance.setErrorMessageLogin("Already Login!!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LoginSystemController.Instance.setErrorMessageLogin(ex.Message);
             }

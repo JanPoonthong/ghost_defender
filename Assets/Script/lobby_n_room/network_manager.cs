@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
+public class network_manager : SimulationBehaviour, INetworkRunnerCallbacks
 {
     //to create an instance of network runner. makes easy for other script for usage
     public static NetworkRunner runnerInstance;
@@ -26,14 +26,18 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
     public GameObject player_in_room_prefab;
     //local player detail part
     public string player_nick_name;
-    void Awake(){
+
+    void Awake()
+    {
         runnerInstance = gameObject.GetComponent<NetworkRunner>();
-        if(runnerInstance == null){
+        if (runnerInstance == null)
+        {
             runnerInstance = gameObject.AddComponent<NetworkRunner>();
         }
     }
-    void Start(){
-        runnerInstance.JoinSessionLobby(SessionLobby.ClientServer,lobby_name);
+    void Start()
+    {
+        runnerInstance.JoinSessionLobby(SessionLobby.ClientServer, lobby_name);
     }
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
@@ -44,15 +48,19 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
         //create new one
         create_all_room_content_prefab(sessionList);
     }
-    void destroy_all_room_content_prefab(){
-        for(int i =0;i<room_content_transform.childCount;i++){
+    void destroy_all_room_content_prefab()
+    {
+        for (int i = 0; i < room_content_transform.childCount; i++)
+        {
             room_content_transform.GetChild(i).GetComponent<room_content_prefab_script>().destroy_self();
         }
     }
-    void create_all_room_content_prefab(List<SessionInfo> session){
-        foreach(SessionInfo each in session){
+    void create_all_room_content_prefab(List<SessionInfo> session)
+    {
+        foreach (SessionInfo each in session)
+        {
             //create method
-            GameObject room_clone = Instantiate(room_content_prefab,room_content_transform);
+            GameObject room_clone = Instantiate(room_content_prefab, room_content_transform);
 
             //apply room's info
             room_content_prefab_script room_info = room_clone.GetComponent<room_content_prefab_script>();
@@ -62,12 +70,21 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
     }
 
     //creating room method
-    public void create_room(){
-        runnerInstance.StartGame(new StartGameArgs(){
-            SessionName = room_name_input.text,
-            GameMode = GameMode.AutoHostOrClient,
+    public void create_room()
+    {
+        runnerInstance.ProvideInput = true;
+
+        var mode = GameMode.AutoHostOrClient;
+        var roomName = room_name_input.text;
+
+        var startGameArgs = new StartGameArgs()
+        {
+            SessionName = roomName,
+            GameMode = mode,
             Scene = SceneRef.FromIndex(1),
-        });
+        };
+        
+        runnerInstance.StartGame(startGameArgs);
         player_nick_name = player_name_input.text;
 
         player_name_input.text = "";
@@ -77,22 +94,22 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        
+
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        
+
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        
+
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
     {
-        
+
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
@@ -102,7 +119,7 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
     {
-        
+
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -126,35 +143,36 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {
-        
+
     }
 
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        
+
     }
 
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        
+
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        // if(runner.IsServer){
-        //     Debug.LogWarning("finished loading scene");
+        if (runner.IsServer)
+        {
+            // Debug.LogWarning("finished loading scene");
 
-        //     player_in_room_spawner script_spawner = GameObject.FindObjectOfType<player_in_room_spawner>();
-        //     script_spawner.RPCadding_player_list(player);
+            // player_in_room_spawner script_spawner = GameObject.FindObjectOfType<player_in_room_spawner>();
+            // script_spawner.RPCadding_player_list(player);
 
-        //     Debug.LogWarning("this is player nick name : " + player_nick_name);
+            // Debug.LogWarning("this is player nick name : " + player_nick_name);
 
-        //     // runnerInstance.Spawn(player_prefab,new Vector3(0,.2f,0),Quaternion.identity,player);
-        // }
-        Debug.LogWarning("finished loading scene");
+            // runnerInstance.Spawn(player_prefab, new Vector3(0, .2f, 0), Quaternion.identity, player);
+        }
+        // Debug.LogWarning("finished loading scene");
 
         player_in_room_spawner script_spawner = GameObject.FindObjectOfType<player_in_room_spawner>();
-        script_spawner.RPCadding_player_list(player,player_nick_name);
+        script_spawner.RPCadding_player_list(player, player_nick_name);
 
         Debug.LogWarning("this is player nick name : " + player_nick_name);
     }
@@ -166,22 +184,22 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
 
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
     {
-        
+
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
     {
-        
+
     }
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        
+
     }
 
     public void OnSceneLoadStart(NetworkRunner runner)
     {
-        
+
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
@@ -191,6 +209,6 @@ public class network_manager : SimulationBehaviour,INetworkRunnerCallbacks
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     {
-        
+
     }
 }

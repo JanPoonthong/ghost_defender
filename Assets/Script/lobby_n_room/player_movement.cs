@@ -7,14 +7,16 @@ public class player_movement : NetworkBehaviour
 {
     NetworkCharacterController char_control;
     public float speed;
-    void Start(){
+    void Start()
+    {
         char_control = GetComponent<NetworkCharacterController>();
     }
     public override void FixedUpdateNetwork()
     {
-        if(GetInput(out networkInputData data)){
+        if (GetInput(out networkInputData data))
+        {
             data.direction.Normalize();
-            char_control.Move(speed*data.direction*Runner.DeltaTime);
+            char_control.Move(speed * data.direction * Runner.DeltaTime);
         }
     }
 }
